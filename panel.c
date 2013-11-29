@@ -86,12 +86,6 @@ int main() {
 
   my_wins[i] = newwin(lines, cols, y + 5, x);
 
-  mvprintw(15, 1, "%d", i);
-  mvprintw(16, 1, "%d", losowe[i]);
-  mvprintw(17, 1, "%d", map[losowe[i]]);
-
-  getch();
-
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
   mvwprintw(my_wins[i], y, 2, "%d", losowe[i]);
