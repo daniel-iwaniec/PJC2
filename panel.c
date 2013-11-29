@@ -3,8 +3,8 @@
 #define N 10
 
 int main() {
- WINDOW *my_wins[N*2];
- PANEL *my_panels[N*2];
+ WINDOW * my_wins[N];
+ PANEL * my_panels[N];
  srand(time(0));
  int lines = 5, q, cols = 5, koniec_programu = 0, y = 2, x = 2, h = 1, z, i, j = 0, ch, losowe[N], map[100];
 
@@ -82,9 +82,15 @@ int main() {
 
 
  x = 2;
- for (i = N; i < N; ++i) {
+ for (i = 0; i < N; ++i) {
 
   my_wins[i] = newwin(lines, cols, y + 5, x);
+
+  mvprintw(1, 1, "%d", i);
+  mvprintw(2, 1, "%d", losowe[i]);
+  mvprintw(3, 1, "%d", map[losowe[i]]);
+
+  getch();
 
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
