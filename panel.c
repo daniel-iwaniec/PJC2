@@ -6,7 +6,7 @@ int main() {
  WINDOW * my_wins[N];
  PANEL * my_panels[N];
  srand(time(0));
- int lines = 5, q, cols = 5, koniec_programu = 0, y = 2, x = 2, h = 1, z, i, j = 0, ch, losowe[N], map[100];
+ int lines = 5, q, cols = 5, koniec_programu = 0, y = 2, x = 2, h = 1, z, i, j = 0, ch, losowe[N], map[50];
 
  initscr();
  cbreak();
@@ -30,11 +30,7 @@ int main() {
  printw("sortowanie metoda shella. nacisnij 1 !!!");
  printw("Press F1 to exit");
  attroff(A_BOLD);
-
- for (i = 0; i < 100; ++i) {
-  map[i] = 0;
- }
-
+ 
  for (i = 0; i < N; ++i) {
 
   losowe [i] = ((rand() % 50) + 0);
