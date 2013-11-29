@@ -86,9 +86,9 @@ int main() {
 
   my_wins[i] = newwin(lines, cols, y + 5, x);
 
-  mvprintw(1, 1, "%d", i);
-  mvprintw(2, 1, "%d", losowe[i]);
-  mvprintw(3, 1, "%d", map[losowe[i]]);
+  mvprintw(15, 1, "%d", i);
+  mvprintw(16, 1, "%d", losowe[i]);
+  mvprintw(17, 1, "%d", map[losowe[i]]);
 
   getch();
 
