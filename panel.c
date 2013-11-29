@@ -3,8 +3,8 @@
 #define N 10
 
 int main() {
- WINDOW * my_wins[N*2];
- PANEL * my_panels[N*2];
+ WINDOW *my_wins[N*2];
+ PANEL *my_panels[N*2];
  srand(time(0));
  int lines = 5, q, cols = 5, koniec_programu = 0, y = 2, x = 2, h = 1, z, i, j = 0, ch, losowe[N], map[100];
 
