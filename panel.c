@@ -30,6 +30,11 @@ int main() {
  printw("sortowanie metoda shella. nacisnij 1 !!!");
  printw("Press F1 to exit");
  attroff(A_BOLD);
+
+ for (i = 0; i < N; ++i) {
+  map[i] = 0;
+ }
+
  for (i = 0; i < N; ++i) {
 
   losowe [i] = ((rand() % 50) + 0);
@@ -83,7 +88,7 @@ int main() {
 
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
-  mvwprintw(my_wins[i], y, 2, "%d", losowe [i]);
+  mvwprintw(my_wins[i], y, 2, "%d", losowe[i]);
   x = x + 5;
 
 
