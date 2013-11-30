@@ -9,6 +9,17 @@ int main() {
  int lines = 5, q, cols = 5, koniec_programu = 0, y = 2, x = 2, h = 1, z, i, j = 0, ch, losowe[N], map[50];
  float tempFloat;
 
+  for (i = 0; i < N; ++i) {
+
+  losowe [i] = ((rand() % 50) + 0);
+  map[losowe[i]] = i;
+
+  tempFloat = losowe[i]/10;
+  printf("%f", tempFloat);
+
+  x = x + 5;
+ }
+
  initscr();
  cbreak();
  noecho();
