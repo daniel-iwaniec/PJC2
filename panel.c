@@ -7,6 +7,7 @@ int main() {
  PANEL * my_panels[N];
  srand(time(0));
  int lines = 5, q, cols = 5, koniec_programu = 0, y = 2, x = 2, h = 1, z, i, j = 0, ch, losowe[N], map[50];
+ float tempFloat;
 
  initscr();
  cbreak();
@@ -40,7 +41,9 @@ int main() {
   wbkgdset(my_wins[i], COLOR_PAIR(i));
   werase(my_wins[i]);
 
-  mvwprintw(my_wins[i], y, 2, "%f", losowe[i]/100);
+  tempFloat = losowe[i]/10;
+
+  mvwprintw(my_wins[i], y, 2, "%f", tempFloat);
 
   x = x + 5;
  }
@@ -84,7 +87,8 @@ int main() {
 
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
-  mvwprintw(my_wins[i], y, 2, "%f", losowe[i]/100);
+  tempFloat = losowe[i]/10;
+  mvwprintw(my_wins[i], y, 2, "%l", tempFloat);
   x = x + 5;
 
 
