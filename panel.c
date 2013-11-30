@@ -41,8 +41,8 @@ int main() {
   wbkgdset(my_wins[i], COLOR_PAIR(i));
   werase(my_wins[i]);
 
-  tempFloat = losowe[i]/100;
-  mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
+  //tempFloat = losowe[i]/4;
+  mvwprintw(my_wins[i], y, 2, "%d", losowe[i]);
 
   x = x + 5;
  }
@@ -63,7 +63,7 @@ int main() {
 
  // Sortujemy
 
- while (h) {
+ /*while (h) {
   for (j = N - h - 1; j >= 0; j--) {
    z = losowe[j];
    i = j + h;
@@ -75,7 +75,7 @@ int main() {
   }
   h /= 3;
 
- }
+ }*/
  // Wyświetlamy wynik sortowania
 
 
@@ -86,7 +86,7 @@ int main() {
 
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
-  tempFloat = losowe[i]/100;
+  tempFloat = losowe[i]/4;
   mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
   x = x + 5;
 
