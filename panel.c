@@ -17,10 +17,10 @@ int main() {
   tempFloat = losowe[i]/10;
   printf("%f", tempFloat);
 
-  x = x + 5;
+  //x = x + 5;
  }
 
- initscr();
+ /*initscr();
  cbreak();
  noecho();
  curs_set(1);
@@ -61,7 +61,7 @@ int main() {
  for (i = 0; i < N; ++i)
   box(my_wins[i], 0, 0);
 
- /* Attach a panel to each window */
+ /* Attach a panel to each window
  for (i = 0; i < N; ++i)
   my_panels[i] = new_panel(my_wins[i]);
  update_panels();
@@ -109,7 +109,7 @@ int main() {
  for (i = 0; i < N; ++i)
 
   box(my_wins[i], 0, 0);
- /* Attach a panel to each window */
+ /* Attach a panel to each window
  for (i = 0; i < N; ++i) {
   my_panels[i] = new_panel(my_wins[i]);
 
@@ -158,7 +158,7 @@ int main() {
 
   doupdate();
  }
- endwin();
+ endwin();*/
  return 0;
 }
 
