@@ -42,7 +42,7 @@ int main() {
   werase(my_wins[i]);
 
   tempFloat = losowe[i]/10;
-  mvwprintw(my_wins[i], y, 2, "%f", tempFloat);
+  mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
 
   x = x + 5;
  }
@@ -87,7 +87,7 @@ int main() {
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
   tempFloat = losowe[i]/10;
-  mvwprintw(my_wins[i], y, 2, "%f", tempFloat);
+  mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
   x = x + 5;
 
 
