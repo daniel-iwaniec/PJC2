@@ -35,27 +35,26 @@ int main() {
   for (i = 0; i < N; ++i) {
   losowe [i] = ((rand() % 50) + 0);
   map[losowe[i]] = i;
+  
   my_wins[i] = newwin(lines, cols, y, x);
   wbkgdset(my_wins[i], COLOR_PAIR(i));
   werase(my_wins[i]);
+  box(my_wins[i], 0, 0);
+  my_panels[i] = new_panel(my_wins[i]);
   tempFloat = (double)((double)losowe[i] / (double)4.0);
   mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
   x = x + 10;
  }
-
- for (i = 0; i < N; ++i)
- box(my_wins[i], 0, 0);
-
- /* Attach a panel to each window */
- for (i = 0; i < N; ++i)
- my_panels[i] = new_panel(my_wins[i]);
+ 
  update_panels();
  doupdate();
- // Wyznaczamy wartość początkowego przesunięcia
+ 
+  while((q = getch()) != KEY_F(2)) {}
 
+ //SORTOWANIE- wyznaczanie h
  for (h = 1; h < N; h = 3 * h + 1);
  h /= 9;
- if (!h) h++; // istotne dla małych N, dla większych można pominąć!
+ if (!h) h++;
 
  // Sortujemy
  while (h) {
@@ -69,12 +68,31 @@ int main() {
    losowe[i - h] = z;
   }
   h /= 3;
-
- }
-  // Wyświetlamy wynik sortowania
+  
+  //tutaj rysuj okienka
   x = 0;
   for (i = 0; i < N; ++i) {
-  my_wins[i] = newwin(lines, cols, y + 7, x);
+   my_wins[i] = newwin(lines, cols, y, x);
+   wbkgdset(my_wins[i], COLOR_PAIR(i));
+   werase(my_wins[i]);
+   box(my_wins[i], 0, 0);
+   my_panels[i] = new_panel(my_wins[i]);
+   tempFloat = (double)((double)losowe[i] / (double)4.0);
+   mvwprintw(my_wins[i], 2, 2, "%.2f", tempFloat);
+   x = x + 10;
+  }
+ 
+ update_panels();
+ doupdate();
+ 
+ while((q = getch()) != KEY_F(2)) {}
+  
+ }
+ 
+  // Wy�wietlamy wynik sortowania
+  x = 0;
+  for (i = 0; i < N; ++i) {
+  my_wins[i] = newwin(lines, cols, y, x);
   wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
   tempFloat = (double)((double)losowe[i] / (double)4.0);
