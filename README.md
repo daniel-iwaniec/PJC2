@@ -1,4 +1,10 @@
-PJC2
-====
+Politechnika Świętokrzyska 
+==========================
+Programowanie w języku C 2 - Projekt
+------------------------------------
 
-Projekt na PJC2
+Semestr zimowy 2013/2014.
+
+Autorzy:
+* Daniel Iwaniec
+* Artur Kałuża   
