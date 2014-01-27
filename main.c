@@ -35,7 +35,7 @@ int main() {
   for (i = 0; i < N; ++i) {
   losowe [i] = ((rand() % 50) + 0);
   map[losowe[i]] = i;
-  
+
   my_wins[i] = newwin(lines, cols, y, x);
   wbkgdset(my_wins[i], COLOR_PAIR(i));
   werase(my_wins[i]);
@@ -45,10 +45,10 @@ int main() {
   mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
   x = x + 10;
  }
- 
+
  update_panels();
  doupdate();
- 
+
   while((q = getch()) != KEY_F(2)) {}
 
  //SORTOWANIE- wyznaczanie h
@@ -68,7 +68,7 @@ int main() {
    losowe[i - h] = z;
   }
   h /= 3;
-  
+
   //tutaj rysuj okienka
   x = 0;
   for (i = 0; i < N; ++i) {
@@ -81,15 +81,15 @@ int main() {
    mvwprintw(my_wins[i], 2, 2, "%.2f", tempFloat);
    x = x + 10;
   }
- 
+
  update_panels();
  doupdate();
- 
+
  while((q = getch()) != KEY_F(2)) {}
-  
+
  }
- 
-  // Wyœwietlamy wynik sortowania
+
+  // Wyï¿½wietlamy wynik sortowania
   x = 0;
   for (i = 0; i < N; ++i) {
   my_wins[i] = newwin(lines, cols, y, x);
@@ -116,9 +116,9 @@ int main() {
  while((q = getch()) != KEY_F(2)) {
 
 
-  
+
   koniec_programu = 1;
-  
+
 update_panels();
   doupdate();
  }
