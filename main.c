@@ -1,19 +1,24 @@
 #include <panel.h>
 #include <time.h>
-#define N 7
+#include <math.h>
+#define N 20
 
 int main() {
  WINDOW * my_wins[N];
  PANEL * my_panels[N];
- srand(time(0));
- int lines = 5, q, cols = 10, koniec_programu = 0, y = 2, x = 0, h = 1, z, i, j = 0, ch, losowe[N], map[50];
+ int lines = 5, q, cols = 8, koniec_programu = 0, y = 2, x = 0, h = 1, z, i, j = 0, ch, losowe[N], map[50], maxX, maxY, leftX;
  double tempFloat;
 
+ srand(time(0));
  initscr();
  cbreak();
  noecho();
  curs_set(0);
  keypad(stdscr, TRUE);
+ getmaxyx(stdscr, maxY, maxX);
+
+ leftX = maxX - cols * N;
+ leftX = round((float) leftX / 2);
 
  start_color();
  init_pair(0, COLOR_YELLOW, COLOR_BLUE);
@@ -28,28 +33,30 @@ int main() {
  init_pair(9, COLOR_WHITE, COLOR_GREEN);
 
  attron(A_BOLD);
- printw("sortowanie metoda shella\n");
- printw("Press F2 to exit");
+ //printw("sortowanie metoda shella maxX: %d, maxY: %d, leftX: %d\n", maxX, maxY, leftX);
+ //printw("Press F2 to exit");
  attroff(A_BOLD);
 
-  for (i = 0; i < N; ++i) {
-  losowe [i] = ((rand() % 50) + 0);
+ x = leftX;
+ for (i = 0; i < N; ++i) {
+  losowe [i] = (rand() % 40);
   map[losowe[i]] = i;
 
   my_wins[i] = newwin(lines, cols, y, x);
-  wbkgdset(my_wins[i], COLOR_PAIR(i));
+  //wbkgdset(my_wins[i], COLOR_PAIR(i));
   werase(my_wins[i]);
   box(my_wins[i], 0, 0);
   my_panels[i] = new_panel(my_wins[i]);
-  tempFloat = (double)((double)losowe[i] / (double)4.0);
+  tempFloat = (double) ((double) losowe[i] / (double) 4.0);
   mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
-  x = x + 10;
+  x = x + cols;
  }
 
  update_panels();
  doupdate();
 
-  while((q = getch()) != KEY_F(2)) {}
+ while ((q = getch()) != KEY_F(2)) {
+ }
 
  //SORTOWANIE- wyznaczanie h
  for (h = 1; h < N; h = 3 * h + 1);
@@ -66,46 +73,48 @@ int main() {
     i += h;
    }
    losowe[i - h] = z;
+   //tutaj rysuj okienka
+   x = leftX;
+   for (i = 0; i < N; ++i) {
+    my_wins[i] = newwin(lines, cols, y, x);
+    wbkgdset(my_wins[i], COLOR_PAIR(3));
+    werase(my_wins[i]);
+    box(my_wins[i], 0, 0);
+    my_panels[i] = new_panel(my_wins[i]);
+    tempFloat = (double) ((double) losowe[i] / (double) 4.0);
+    mvwprintw(my_wins[i], 2, 2, "%.2f", tempFloat);
+    x = x + cols;
+   }
   }
   h /= 3;
 
-  //tutaj rysuj okienka
-  x = 0;
-  for (i = 0; i < N; ++i) {
-   my_wins[i] = newwin(lines, cols, y, x);
-   wbkgdset(my_wins[i], COLOR_PAIR(i));
-   werase(my_wins[i]);
-   box(my_wins[i], 0, 0);
-   my_panels[i] = new_panel(my_wins[i]);
-   tempFloat = (double)((double)losowe[i] / (double)4.0);
-   mvwprintw(my_wins[i], 2, 2, "%.2f", tempFloat);
-   x = x + 10;
+
+
+  update_panels();
+  doupdate();
+
+  while ((q = getch()) != KEY_F(2)) {
   }
-
- update_panels();
- doupdate();
-
- while((q = getch()) != KEY_F(2)) {}
 
  }
 
-  // Wy�wietlamy wynik sortowania
-  x = 0;
-  for (i = 0; i < N; ++i) {
+ // Wy�wietlamy wynik sortowania
+ x = leftX;
+ for (i = 0; i < N; ++i) {
   my_wins[i] = newwin(lines, cols, y, x);
-  wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
+  //wbkgdset(my_wins[i], COLOR_PAIR(map[losowe[i]]));
   werase(my_wins[i]);
-  tempFloat = (double)((double)losowe[i] / (double)4.0);
+  tempFloat = (double) ((double) losowe[i] / (double) 4.0);
   mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
-  x = x + 10;
+  x = x + cols;
  }
 
 
  for (i = 0; i < N; ++i)
- box(my_wins[i], 0, 0);
+  box(my_wins[i], 0, 0);
  /* Attach a panel to each window */
  for (i = 0; i < N; ++i) {
- my_panels[i] = new_panel(my_wins[i]);
+  my_panels[i] = new_panel(my_wins[i]);
 
  }
 
@@ -113,13 +122,13 @@ int main() {
  doupdate();
 
 
- while((q = getch()) != KEY_F(2)) {
+ while ((q = getch()) != KEY_F(2)) {
 
 
 
   koniec_programu = 1;
 
-update_panels();
+  update_panels();
   doupdate();
  }
  endwin();
