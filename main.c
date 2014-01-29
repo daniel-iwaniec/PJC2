@@ -1,23 +1,27 @@
 #include <panel.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
 #define N 8
 
 bool isInArray(int tab[], int num_elements, int value) {
  int i;
  for (i = 0; i < num_elements; i++) {
   if (tab[i] == value) {
-   return true; /* it was found */
+   return true;
   }
  }
- return false; /* if it was not found */
+ return false;
 }
 
 int main() {
  WINDOW * my_wins[N];
  PANEL * my_panels[N];
  int bubbleChain[N], bubbleChainValues[N];
- int lines = 5, q, cols = 8, koniec_programu = 0, y = 2, x = 0, h = 1, z, i, j = 0, k, l, ch, losowe[N], losoweConst[N], map[50], maxX, maxY, leftX, bci, bciTemp;
+ int lines = 5, q, cols = 8, koniec_programu = 0, y = 2, x = 0, h = 1, z, i, j = 0, k, l, ch, losowe[N], losoweConst[N], map[50], maxX, maxY, leftX, leftXString, bci, bciTemp;
+ char header[] = "SORTOWANIE SHELL'A";
+ int collectionCount = 0;
+ int switchCount = 0;
  double tempFloat;
 
  srand(time(0));
@@ -30,6 +34,9 @@ int main() {
 
  leftX = maxX - cols * N;
  leftX = round((float) leftX / 2);
+
+ leftXString = maxX - strlen(header);
+ leftXString = round((float) leftXString / 2);
 
  start_color();
  init_pair(0, COLOR_WHITE, COLOR_BLACK);
@@ -45,8 +52,7 @@ int main() {
  init_pair(10, COLOR_CYAN, COLOR_BLACK);
 
  attron(A_BOLD);
- //printw("sortowanie metoda shella maxX: %d, maxY: %d, leftX: %d\n", maxX, maxY, leftX);
- //printw("Press F2 to exit");
+ mvprintw(0, leftXString, header);
  attroff(A_BOLD);
 
  x = leftX;
@@ -84,7 +90,8 @@ int main() {
 
    z = losowe[j];
    i = j + h;
-   l = -1; bci = 0;
+   l = -1;
+   bci = 0;
 
    for (l = 0; l < N; l++) {
     losoweConst[l] = losowe[l];
@@ -103,8 +110,8 @@ int main() {
     //box(my_wins[i], 0, 0);
     //wrefresh(my_wins[i]);
 
-    if (!isInArray(bubbleChain, bci, (i-h)) && (i-h) >= 0 && (i-h) <= N) {
-     bubbleChain[bci++] = i-h;
+    if (!isInArray(bubbleChain, bci, (i - h)) && (i - h) >= 0 && (i - h) <= N) {
+     bubbleChain[bci++] = i - h;
      //l++;
     }
     //wbkgdset(my_wins[i - h], COLOR_PAIR(l + 1));
@@ -115,13 +122,14 @@ int main() {
    }
    losowe[i - h] = z;
    if (bci > 0) {
+    collectionCount++;
 
     bciTemp = bubbleChain[0];
     bubbleChain[0] = bubbleChain[1];
     bubbleChain[1] = bciTemp;
 
     bciTemp = 0;
-    while (bubbleChain[bciTemp] != -1) {
+    while (bubbleChain[bciTemp] != -1 && bciTemp >= 0 && bciTemp < N) {
      wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(1));
      box(my_wins[bubbleChain[bciTemp]], 0, 0);
      wrefresh(my_wins[bubbleChain[bciTemp]]);
@@ -129,28 +137,29 @@ int main() {
     }
 
     bciTemp = 0;
-    while (bubbleChain[bciTemp+1] != -1) {
+    while (bubbleChain[bciTemp + 1] != -1) {
+     switchCount++;
      l = bubbleChain[bciTemp];
      wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(2));
      box(my_wins[bubbleChain[bciTemp]], 0, 0);
      wrefresh(my_wins[bubbleChain[bciTemp]]);
-     l = bubbleChain[bciTemp+1];
-     wbkgdset(my_wins[bubbleChain[bciTemp+1]], COLOR_PAIR(2));
-     box(my_wins[bubbleChain[bciTemp+1]], 0, 0);
-     wrefresh(my_wins[bubbleChain[bciTemp+1]]);
+     l = bubbleChain[bciTemp + 1];
+     wbkgdset(my_wins[bubbleChain[bciTemp + 1]], COLOR_PAIR(2));
+     box(my_wins[bubbleChain[bciTemp + 1]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
 
      while ((q = getch()) != KEY_F(2));
 
-     tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp+1]] / (double) 4.0);
+     tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp + 1]] / (double) 4.0);
      mvwprintw(my_wins[bubbleChain[bciTemp]], y, 2, "%.2f", tempFloat);
      wrefresh(my_wins[bubbleChain[bciTemp]]);
 
      tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp]] / (double) 4.0);
-     mvwprintw(my_wins[bubbleChain[bciTemp+1]], y, 2, "%.2f", tempFloat);
-     wrefresh(my_wins[bubbleChain[bciTemp+1]]);
+     mvwprintw(my_wins[bubbleChain[bciTemp + 1]], y, 2, "%.2f", tempFloat);
+     wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
 
-     l = losoweConst[bubbleChain[bciTemp+1]];
-     losoweConst[bubbleChain[bciTemp+1]] = losoweConst[bubbleChain[bciTemp]];
+     l = losoweConst[bubbleChain[bciTemp + 1]];
+     losoweConst[bubbleChain[bciTemp + 1]] = losoweConst[bubbleChain[bciTemp]];
      losoweConst[bubbleChain[bciTemp]] = l;
 
      while ((q = getch()) != KEY_F(2));
@@ -159,9 +168,9 @@ int main() {
      box(my_wins[bubbleChain[bciTemp]], 0, 0);
      wrefresh(my_wins[bubbleChain[bciTemp]]);
 
-     wbkgdset(my_wins[bubbleChain[bciTemp+1]], COLOR_PAIR(0));
-     box(my_wins[bubbleChain[bciTemp+1]], 0, 0);
-     wrefresh(my_wins[bubbleChain[bciTemp+1]]);
+     wbkgdset(my_wins[bubbleChain[bciTemp + 1]], COLOR_PAIR(0));
+     box(my_wins[bubbleChain[bciTemp + 1]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
      bciTemp++;
     }
 
@@ -182,7 +191,8 @@ int main() {
   h /= 3;
  }
 
- printw("Zakonczono");
+ mvprintw(lines + 2 + 1, leftX + 1, "Ilosc podzbiorow: %d", collectionCount);
+ mvprintw(lines + 2 + 2, leftX + 1, "Ilosc zamian: %d", switchCount);
  while ((q = getch()) != KEY_F(2));
 
  endwin();
