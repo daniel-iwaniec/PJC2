@@ -1,27 +1,36 @@
+/*
+ Programowanie w języku C 2 - Projekt
+ Sortowanie metodą Shell'a
+ * Daniel Iwaniec
+ * Artur Kałuża
+ */
+
 #include <panel.h>
 #include <time.h>
 #include <math.h>
 #include <string.h>
 #define N 8
 
-bool isInArray(int tab[], int num_elements, int value) {
+bool isInArray(int array[], int n, int value) {
  int i;
- for (i = 0; i < num_elements; i++) {
-  if (tab[i] == value) {
-   return true;
-  }
+ for (i = 0; i < n; i++) {
+  if (array[i] == value) return true;
  }
  return false;
 }
 
 int main() {
+ int key;
+
+ char header[] = "SORTOWANIE SHELL'A";
  WINDOW * my_wins[N];
  PANEL * my_panels[N];
- int bubbleChain[N], bubbleChainValues[N];
- int lines = 5, q, cols = 8, koniec_programu = 0, y = 2, x = 0, h = 1, z, i, j = 0, k, l, ch, losowe[N], losoweConst[N], map[50], maxX, maxY, leftX, leftXString, bci, bciTemp;
- char header[] = "SORTOWANIE SHELL'A";
- int collectionCount = 0;
- int switchCount = 0;
+ int lines = 5, cols = 8, x, maxX, maxY, leftX, leftXString;
+
+ int bubbleChain[N], losowe[N], losoweConst[N];
+ int collectionCount = 0, switchCount = 0;
+ int h = 1, z, i, j = 0, k, l, bci, bciTemp;
+
  double tempFloat;
 
  srand(time(0));
@@ -42,14 +51,6 @@ int main() {
  init_pair(0, COLOR_WHITE, COLOR_BLACK);
  init_pair(1, COLOR_RED, COLOR_BLACK);
  init_pair(2, COLOR_GREEN, COLOR_BLACK);
- init_pair(3, COLOR_YELLOW, COLOR_BLACK);
- init_pair(4, COLOR_BLUE, COLOR_BLACK);
- init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
- init_pair(6, COLOR_CYAN, COLOR_BLACK);
- init_pair(7, COLOR_CYAN, COLOR_BLACK);
- init_pair(8, COLOR_CYAN, COLOR_BLACK);
- init_pair(9, COLOR_CYAN, COLOR_BLACK);
- init_pair(10, COLOR_CYAN, COLOR_BLACK);
 
  attron(A_BOLD);
  mvprintw(0, leftXString, header);
@@ -58,69 +59,57 @@ int main() {
  x = leftX;
  for (i = 0; i < N; ++i) {
   losowe [i] = (rand() % 40);
-  map[losowe[i]] = i;
 
-  my_wins[i] = newwin(lines, cols, y, x);
-  //wbkgdset(my_wins[i], COLOR_PAIR(i));
+  my_wins[i] = newwin(lines, cols, 2, x);
+  wbkgdset(my_wins[i], COLOR_PAIR(0));
   werase(my_wins[i]);
   box(my_wins[i], 0, 0);
   my_panels[i] = new_panel(my_wins[i]);
   tempFloat = (double) ((double) losowe[i] / (double) 4.0);
-  mvwprintw(my_wins[i], y, 2, "%.2f", tempFloat);
+  mvwprintw(my_wins[i], 2, 2, "%.2f", tempFloat);
+
   x = x + cols;
  }
 
  update_panels();
  doupdate();
 
- while ((q = getch()) != KEY_F(2)) {
- }
+ while ((key = getch()) != KEY_F(2));
 
- //SORTOWANIE- wyznaczanie h
  for (h = 1; h < N; h = 3 * h + 1);
  h /= 9;
  if (!h) h++;
 
- // Sortujemy
+
  while (h) {
   for (j = N - h - 1; j >= 0; j--) {
-   for (i = 0; i < N; ++i) {
+   bci = 0;
+   for (i = 0; i < N; i++) {
     bubbleChain[i] = -1;
    }
-
-   z = losowe[j];
-   i = j + h;
-   l = -1;
-   bci = 0;
 
    for (l = 0; l < N; l++) {
     losoweConst[l] = losowe[l];
    }
 
+   z = losowe[j];
+   i = j + h;
+
    while ((i < N) && (z > losowe [i])) {
     losowe[i - h] = losowe[i];
 
     if (!isInArray(bubbleChain, bci, i) && i >= 0 && i <= N) {
-     bubbleChain[bci] = i;
-     bubbleChainValues[bci] = i;
-     bci++;
-     //l++;
+     bubbleChain[bci++] = i;
     }
-    //wbkgdset(my_wins[i], COLOR_PAIR(l + 1));
-    //box(my_wins[i], 0, 0);
-    //wrefresh(my_wins[i]);
 
     if (!isInArray(bubbleChain, bci, (i - h)) && (i - h) >= 0 && (i - h) <= N) {
      bubbleChain[bci++] = i - h;
-     //l++;
     }
-    //wbkgdset(my_wins[i - h], COLOR_PAIR(l + 1));
-    //box(my_wins[i - h], 0, 0);
-    //wrefresh(my_wins[i - h]);
 
     i += h;
    }
    losowe[i - h] = z;
+
    if (bci > 0) {
     collectionCount++;
 
@@ -137,32 +126,32 @@ int main() {
     }
 
     bciTemp = 0;
-    while (bubbleChain[bciTemp + 1] != -1) {
+    while (bubbleChain[bciTemp + 1] != -1 && bciTemp >= 0 && bciTemp < (N - 1)) {
      switchCount++;
-     l = bubbleChain[bciTemp];
+
      wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(2));
      box(my_wins[bubbleChain[bciTemp]], 0, 0);
      wrefresh(my_wins[bubbleChain[bciTemp]]);
-     l = bubbleChain[bciTemp + 1];
+
      wbkgdset(my_wins[bubbleChain[bciTemp + 1]], COLOR_PAIR(2));
      box(my_wins[bubbleChain[bciTemp + 1]], 0, 0);
      wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
 
-     while ((q = getch()) != KEY_F(2));
+     while ((key = getch()) != KEY_F(2));
 
      tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp + 1]] / (double) 4.0);
-     mvwprintw(my_wins[bubbleChain[bciTemp]], y, 2, "%.2f", tempFloat);
+     mvwprintw(my_wins[bubbleChain[bciTemp]], 2, 2, "%.2f", tempFloat);
      wrefresh(my_wins[bubbleChain[bciTemp]]);
 
      tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp]] / (double) 4.0);
-     mvwprintw(my_wins[bubbleChain[bciTemp + 1]], y, 2, "%.2f", tempFloat);
+     mvwprintw(my_wins[bubbleChain[bciTemp + 1]], 2, 2, "%.2f", tempFloat);
      wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
 
      l = losoweConst[bubbleChain[bciTemp + 1]];
      losoweConst[bubbleChain[bciTemp + 1]] = losoweConst[bubbleChain[bciTemp]];
      losoweConst[bubbleChain[bciTemp]] = l;
 
-     while ((q = getch()) != KEY_F(2));
+     while ((key = getch()) != KEY_F(2));
 
      wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(0));
      box(my_wins[bubbleChain[bciTemp]], 0, 0);
@@ -171,10 +160,10 @@ int main() {
      wbkgdset(my_wins[bubbleChain[bciTemp + 1]], COLOR_PAIR(0));
      box(my_wins[bubbleChain[bciTemp + 1]], 0, 0);
      wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
+
      bciTemp++;
     }
 
-    //tutaj rysuj okienka
     x = leftX;
     for (k = 0; k < N; ++k) {
      wbkgdset(my_wins[k], COLOR_PAIR(0));
@@ -185,7 +174,7 @@ int main() {
      wrefresh(my_wins[k]);
      x = x + cols;
     }
-    while ((q = getch()) != KEY_F(2));
+    while ((key = getch()) != KEY_F(2));
    }
   }
   h /= 3;
@@ -193,7 +182,7 @@ int main() {
 
  mvprintw(lines + 2 + 1, leftX + 1, "Ilosc podzbiorow: %d", collectionCount);
  mvprintw(lines + 2 + 2, leftX + 1, "Ilosc zamian: %d", switchCount);
- while ((q = getch()) != KEY_F(2));
+ while ((key = getch()) != KEY_F(2));
 
  endwin();
  return 0;
