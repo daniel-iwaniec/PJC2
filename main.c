@@ -9,7 +9,6 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
-//#define N 8
 
 bool isInArray(int array[], int n, int value) {
  int i;
@@ -20,32 +19,51 @@ bool isInArray(int array[], int n, int value) {
 }
 
 int main() {
+ int N; char inputN[2];
+ int lines = 5, cols = 8, x, maxX, maxY, leftX;
+ int leftXString, leftXStringCollection, leftXStringSwitch;
+
+ char option1[] = "Podaj ilosc liczb do posortowania: ";
+
+ srand(time(0));
+ initscr();
+ keypad(stdscr, TRUE);
+ getmaxyx(stdscr, maxY, maxX);
+
+ leftX = maxX - cols * N;
+ leftX = round((float) leftX / 2);
+
+ leftXString = maxX - strlen(option1);
+ leftXString = round((float) leftXString / 2);
+
+ mvprintw(0, leftXString, option1);
+ scanw("%d", &N);
+
+ clear();
+ cbreak();
+ noecho();
+ curs_set(0);
+
  int key;
 
  char header[] = "SORTOWANIE SHELL'A";
  char collectionStat[] = "Ilosc podzbiorow: ";
  char switchStat[] = "Ilosc zamian: ";
- 
+
  WINDOW * my_wins[N];
  PANEL * my_panels[N];
- int lines = 5, cols = 8, x, maxX, maxY, leftX;
- int leftXString, leftXStringCollection, leftXStringSwitch;
+
 
  int bubbleChain[N], losowe[N], losoweConst[N];
  int collectionCount = 0, switchCount = 0;
  int h = 1, z, i, j = 0, k, l, bci, bciTemp;
- 
+
  bool saveStats = true;
  char filename[] = "./statystyki.txt";
  FILE *plik;
- 
- int N;
 
  double tempFloat;
- 
- printf("Podaj ilosc liczb do posortowania: ");
- scanf("%d", &N);
- 
+
  plik = fopen(filename, "w+");
 
  srand(time(0));
@@ -194,27 +212,26 @@ int main() {
   }
   h /= 3;
  }
- 
- strcat(collectionStat, collectionCount);
- strcat(switchStat, switchCount);
- 
+
+ strcat(collectionStat, "%d");
+ sprintf(collectionStat, collectionStat, collectionCount);
  leftXStringCollection = maxX - strlen(collectionStat);
  leftXStringCollection = round((float) leftXStringCollection / 2);
- 
+ mvprintw(lines + 3, leftXStringCollection, collectionStat);
+
+ strcat(switchStat, "%d");
+ sprintf(switchStat, switchStat, switchCount);
  leftXStringSwitch = maxX - strlen(switchStat);
  leftXStringSwitch = round((float) leftXStringSwitch / 2);
- 
- mvprintw(lines + 3, leftXStringCollection, collectionStat);
  mvprintw(lines + 4, leftXStringSwitch, switchStat);
+
  while ((key = getch()) != KEY_F(2));
 
  endwin();
- 
- fprintf(plik, "Statystki");
- fprintf(plik, "Liczby przed posortowaniem: ");
- fprintf(plik, "Liczby po posortowaniu: ");
- fprintf(plik, "Ilosc podzbiorow: ");
- fprintf(plik, "Ilosc zamian: ");
- 
+
+ fprintf(plik, "Statystki\r\n");
+ fprintf(plik, "Ilosc podzbiorow: %d\r\n", collectionStat);
+ fprintf(plik, "Ilosc zamian: %d\r\n", switchStat);
+
  return 0;
 }
