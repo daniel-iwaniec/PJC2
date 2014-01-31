@@ -9,7 +9,7 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
-#define N 8
+//#define N 8
 
 bool isInArray(int array[], int n, int value) {
  int i;
@@ -23,15 +23,30 @@ int main() {
  int key;
 
  char header[] = "SORTOWANIE SHELL'A";
+ char collectionStat[] = "Ilosc podzbiorow: ";
+ char switchStat[] = "Ilosc zamian: ";
+ 
  WINDOW * my_wins[N];
  PANEL * my_panels[N];
- int lines = 5, cols = 8, x, maxX, maxY, leftX, leftXString;
+ int lines = 5, cols = 8, x, maxX, maxY, leftX;
+ int leftXString, leftXStringCollection, leftXStringSwitch;
 
  int bubbleChain[N], losowe[N], losoweConst[N];
  int collectionCount = 0, switchCount = 0;
  int h = 1, z, i, j = 0, k, l, bci, bciTemp;
+ 
+ bool saveStats = true;
+ char filename[] = "./statystyki.txt";
+ FILE *plik;
+ 
+ int N;
 
  double tempFloat;
+ 
+ printf("Podaj ilosc liczb do posortowania: ");
+ scanf("%d", &N);
+ 
+ plik = fopen(filename, "w+");
 
  srand(time(0));
  initscr();
@@ -179,11 +194,27 @@ int main() {
   }
   h /= 3;
  }
-
- mvprintw(lines + 2 + 1, leftX + 1, "Ilosc podzbiorow: %d", collectionCount);
- mvprintw(lines + 2 + 2, leftX + 1, "Ilosc zamian: %d", switchCount);
+ 
+ strcat(collectionStat, collectionCount);
+ strcat(switchStat, switchCount);
+ 
+ leftXStringCollection = maxX - strlen(collectionStat);
+ leftXStringCollection = round((float) leftXStringCollection / 2);
+ 
+ leftXStringSwitch = maxX - strlen(switchStat);
+ leftXStringSwitch = round((float) leftXStringSwitch / 2);
+ 
+ mvprintw(lines + 3, leftXStringCollection, collectionStat);
+ mvprintw(lines + 4, leftXStringSwitch, switchStat);
  while ((key = getch()) != KEY_F(2));
 
  endwin();
+ 
+ fprintf(plik, "Statystki");
+ fprintf(plik, "Liczby przed posortowaniem: ");
+ fprintf(plik, "Liczby po posortowaniu: ");
+ fprintf(plik, "Ilosc podzbiorow: ");
+ fprintf(plik, "Ilosc zamian: ");
+ 
  return 0;
 }
