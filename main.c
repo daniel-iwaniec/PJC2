@@ -1,123 +1,237 @@
-#include <stdio.h>        //mozna pominac gdy uzywamy curses
-#include <stdlib.h>       //malloc mozna pominac gdy uzywamy curses
-#include <string.h>       //strcat
-#include <curses.h>
+/*
+Programowanie w języku C 2 - Projekt
+Sortowanie metodą Shell'a
+* Daniel Iwaniec
+* Artur Kałuża
+*/
 
-int main(int argc, char *argv[]){
-char plik1[100] = {}, plik2[100] = {};
-char *tablica1, *tablica2;                          //tablice dynamiczne do przechowywania danych z plikow
-int licznik1 = 0, licznik2 = 0;                         //liczniki ilosci znakow w plikach
-int szer;                                   //szerokosc okien - ramka
-int y = 1;                                  //aktualny wiersz, w ktorym wyswietla znak
-int x = 1;                                  //aktualna kolumna, w ktorej wyswietla znak
-char zp1, zp2;
-int ch;
+#include <panel.h>
+#include <time.h>
+#include <math.h>
+#include <string.h>
 
-WINDOW *okno1, *okno2;
-
-FILE *f1, *f2;                                  //wskazniki na pliki
-
-//if (argc != 3){
-//    printf("Cos sie pojebalo, sprobuj %s nazwa1 nazwa2", argv[0]);      //sprawdza czy podano argumenty w wierszu polecen
-//    exit(1);
-//}
-//strcat(plik1, "./"); strcat(plik2, "./");
-
-if (((f1 = fopen(strcat(plik1, "test.txt"), "r")) == NULL) || (f2 = fopen(strcat(plik2, "test2.txt"), "r")) == NULL){
-    //sprawdza, czy moze otworzyc pliki, nie chce mi sie tego rozbijac na 2 osobne bledy wiec jest razem, strcat laczy ./ z nazwa pliku
-    printf("Blad otwarcia ktoregos pliku");
-    exit(1);
+bool isInArray(int array[], int n, int value) {
+ int i;
+ for (i = 0; i < n; i++) {
+  if (array[i] == value) return true;
+ }
+ return false;
 }
 
-while((zp1 = fgetc(f1)) != EOF) licznik1++;                 //ustalamy ilosc znakow, do zaalokowania pamieci
-while((zp2 = fgetc(f2)) != EOF) licznik2++;                 // ^
-//printf("licznik1 %d \tlicznik2 %d", licznik1, licznik2);
-licznik1 += 1; licznik2 += 1;
-//while((ch = getchar()) != 27) continue;
+int main() {
+ int N; char inputN[2];
+ int lines = 5, cols = 8, x, maxX, maxY, leftX;
+ int leftXString, leftXStringCollection, leftXStringSwitch;
 
-tablica1 = (char *) malloc (licznik1 * sizeof (char));              //rozmiar rablic dopasowany do ilosci znakow w pliku
-tablica2 = (char *) malloc (licznik2 * sizeof (char));              //^
+ char option1[] = "Podaj ilosc liczb do posortowania: ";
 
-if (tablica1 == NULL || tablica2 == NULL) { puts("Cos nie pyklo"); exit(EXIT_FAILURE); } //sprawdza, czy faktycznie cos zostalo przydzielone tablicom, NULL znaczy, ze malloc nie zadzialal
+ srand(time(0));
+ initscr();
+ keypad(stdscr, TRUE);
+ getmaxyx(stdscr, maxY, maxX);
 
-licznik1 = 0; licznik2 = 0;                         //zeruje liczniki, przydadza sie w nastepnej linijce
-zp1 = 0; zp2 = 0;
+ leftX = maxX - cols * N;
+ leftX = round((float) leftX / 2);
 
-fclose(f1);
-fclose(f2);
+ leftXString = maxX - strlen(option1);
+ leftXString = round((float) leftXString / 2);
 
-if (((f1 = fopen(plik1, "r")) == NULL) || (f2 = fopen(plik2, "r")) == NULL){
-    //sprawdza, czy moze otworzyc pliki, nie chce mi sie tego rozbijac na 2 osobne bledy wiec jest razem, strcat laczy ./ z nazwa pliku
-    printf("Blad otwarcia ktoregos pliku");
-    exit(1);
-}
+ mvprintw(0, leftXString, option1);
+ scanw("%d", &N);
 
-while(zp1 = getc(f1) != EOF) { tablica1[licznik1] = zp1; licznik1++; }  //wypelniam tablice znakami z pliku
-while(zp2 = getc(f2) != EOF) { tablica2[licznik2] = zp2; licznik2++; }  //^
+ clear();
+ cbreak();
+ noecho();
+ curs_set(0);
 
-ch = 0;
-licznik1 = 0;
-//while(tablica1[licznik1] != EOF) { putc(tablica1[licznik1], stdout); licznik1++; }
-//while((ch = getchar()) != 27) continue;
+ int key;
 
+ char header[] = "SORTOWANIE SHELL'A";
+ char collectionStat[] = "Ilosc podzbiorow: ";
+ char switchStat[] = "Ilosc zamian: ";
 
-fclose(f1); fclose(f2);                             //znaki sa juz w tablicy wiec pliki mozna zamknac, mozna bezposrednio z plikow kopiowac na ekran
-                                        //ale z tablicami mozna sobie dziubac w ciagu niezaleznym od plikow, jesli polecenie tego wymaga
-
-
-
-initscr();                                  //inicjalizuje ekran curses
-curs_set(0);                                    //"usuwa" kursor
-cbreak(); noecho();                             //znaki sa od razu pobierane, program nie czeka na EOF przy czytaniu ciagu
+ WINDOW * my_wins[N];
+ PANEL * my_panels[N];
 
 
-okno1 = newwin(LINES, (COLS / 2), 0, 0);                    //tworzy okna o rozmiarach na pol ekranu standardowego, nie uwzglednia reszty z dzielenia wiec moze sie troche rozjechac
-okno2 = newwin(LINES, (COLS / 2), 0, (COLS / 2));               //^
+ int bubbleChain[N], losowe[N], losoweConst[N];
+ int collectionCount = 0, switchCount = 0;
+ int h = 1, z, i, j = 0, k, l, bci, bciTemp;
 
-szer = (COLS / 2) - 2;                              //obliczenie szerokosci okien -(minus) ramka
+ bool saveStats = true;
+ char filename[] = "./statystyki.txt";
+ FILE *plik;
 
-box(okno1, 0, 0); box(okno2, 0, 0);                     //ramka z kresek
-wnoutrefresh(okno1); wnoutrefresh(okno2); refresh();                //odswiezanie okien, bez tego nic sie nie pokaze
+ double tempFloat;
 
-licznik1 = 0; licznik2 = 0;                         //znowu uzywam licznikow, zeby nie robic bilion zmiennych
+ plik = fopen(filename, "w+");
 
-while (tablica1[licznik1] != EOF && tablica2[licznik2] != EOF){         //dziala do momentu, gdy jeden z plikow osiagnie EOF
+ srand(time(0));
+ initscr();
+ cbreak();
+ noecho();
+ curs_set(0);
+ keypad(stdscr, TRUE);
+ getmaxyx(stdscr, maxY, maxX);
 
-    if (x == szer) { x = 1; y += 1; }                   //jezeli linia dojdzie do konca okna, przenosi do nowego wiersza
+ leftX = maxX - cols * N;
+ leftX = round((float) leftX / 2);
 
-    if (tablica1[licznik1] == tablica2[licznik2]){              //jezeli znaki w obu tablicach sa takie same, to drukuje je w negatywie
-        mvwprintw(okno1, y, x, "%c", tablica1[licznik1] | A_REVERSE);
-        mvwprintw(okno2, y, x, "%c", tablica2[licznik2] | A_REVERSE);
+ leftXString = maxX - strlen(header);
+ leftXString = round((float) leftXString / 2);
+
+ start_color();
+ init_pair(0, COLOR_WHITE, COLOR_BLACK);
+ init_pair(1, COLOR_RED, COLOR_BLACK);
+ init_pair(2, COLOR_GREEN, COLOR_BLACK);
+
+ attron(A_BOLD);
+ mvprintw(0, leftXString, header);
+ attroff(A_BOLD);
+
+ x = leftX;
+ for (i = 0; i < N; ++i) {
+  losowe [i] = (rand() % 40);
+
+  my_wins[i] = newwin(lines, cols, 2, x);
+  wbkgdset(my_wins[i], COLOR_PAIR(0));
+  werase(my_wins[i]);
+  box(my_wins[i], 0, 0);
+  my_panels[i] = new_panel(my_wins[i]);
+  tempFloat = (double) ((double) losowe[i] / (double) 4.0);
+  mvwprintw(my_wins[i], 2, 2, "%.2f", tempFloat);
+
+  x = x + cols;
+ }
+
+ update_panels();
+ doupdate();
+
+ while ((key = getch()) != KEY_F(2));
+
+ for (h = 1; h < N; h = 3 * h + 1);
+ h /= 9;
+ if (!h) h++;
+
+
+ while (h) {
+  for (j = N - h - 1; j >= 0; j--) {
+   bci = 0;
+   for (i = 0; i < N; i++) {
+    bubbleChain[i] = -1;
+   }
+
+   for (l = 0; l < N; l++) {
+    losoweConst[l] = losowe[l];
+   }
+
+   z = losowe[j];
+   i = j + h;
+
+   while ((i < N) && (z > losowe [i])) {
+    losowe[i - h] = losowe[i];
+
+    if (!isInArray(bubbleChain, bci, i) && i >= 0 && i <= N) {
+     bubbleChain[bci++] = i;
     }
 
-    if (tablica1[licznik1] != tablica2[licznik2]){              //jezeli znaki nie sa takie same, drukuje je normalnie
-        mvwprintw(okno1, y, x, "%c", tablica1[licznik1]);
-        mvwprintw(okno2, y, x, "%c", tablica2[licznik2]);
+    if (!isInArray(bubbleChain, bci, (i - h)) && (i - h) >= 0 && (i - h) <= N) {
+     bubbleChain[bci++] = i - h;
     }
-    wnoutrefresh(okno1); wnoutrefresh(okno2); refresh();            //odswiezanie okien, bez tego nic sie nie pokaze
 
-    x++; licznik1++; licznik2++;                        //zmienia pozycje kursora o 1(x), zeby ciag mogl sie wyswietlic, inkrementuje liczniki
-}
+    i += h;
+   }
+   losowe[i - h] = z;
 
-if (tablica1[licznik1] != EOF && tablica2[licznik2] == EOF){            //jesli tablica1 jest dluzsza niz tablica2 to trzeba dalej z niej wypisywac, nie?
-    if (x == szer) { x = 1; y += 1; }
-    mvwprintw(okno1, y, x, "%c", tablica1[licznik1]);
+   if (bci > 0) {
+    collectionCount++;
 
-    wnoutrefresh(okno1); wnoutrefresh(okno2); refresh();            //odswiezanie okien, bez tego nic sie nie pokaze
-    x++; licznik1++;
-}
+    bciTemp = bubbleChain[0];
+    bubbleChain[0] = bubbleChain[1];
+    bubbleChain[1] = bciTemp;
 
-if (tablica1[licznik1] == EOF && tablica2[licznik2] != EOF){            //jesli tablica2 jest dluzsza niz tablica1 to trzeba dalej z niej wypisywac, nie?
-    if (x == szer) { x = 1; y += 1; }
-    mvwprintw(okno2, y, x, "%c", tablica2[licznik2]);
+    bciTemp = 0;
+    while (bubbleChain[bciTemp] != -1 && bciTemp >= 0 && bciTemp < N) {
+     wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(1));
+     box(my_wins[bubbleChain[bciTemp]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp]]);
+     bciTemp++;
+    }
 
-    wnoutrefresh(okno1); wnoutrefresh(okno2); refresh();            //odswiezanie okien, bez tego nic sie nie pokaze
-    x++; licznik2++;
-}
+    bciTemp = 0;
+    while (bubbleChain[bciTemp + 1] != -1 && bciTemp >= 0 && bciTemp < (N - 1)) {
+     switchCount++;
 
-getch();                                    //bez tego program sie wykona, a my nic nie zobaczymy :(
-delwin(okno1); delwin(okno2);                           //po zakonczeniu dzialania powinno sie usuwac okna
-endwin();                                   //konczy dzialanie curses
-free(tablica1); free(tablica2);                         //zwalnia pamiec przechowywana przez tablice
-return 0;
+     wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(2));
+     box(my_wins[bubbleChain[bciTemp]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp]]);
+
+     wbkgdset(my_wins[bubbleChain[bciTemp + 1]], COLOR_PAIR(2));
+     box(my_wins[bubbleChain[bciTemp + 1]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
+
+     while ((key = getch()) != KEY_F(2));
+
+     tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp + 1]] / (double) 4.0);
+     mvwprintw(my_wins[bubbleChain[bciTemp]], 2, 2, "%.2f", tempFloat);
+     wrefresh(my_wins[bubbleChain[bciTemp]]);
+
+     tempFloat = (double) ((double) losoweConst[bubbleChain[bciTemp]] / (double) 4.0);
+     mvwprintw(my_wins[bubbleChain[bciTemp + 1]], 2, 2, "%.2f", tempFloat);
+     wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
+
+     l = losoweConst[bubbleChain[bciTemp + 1]];
+     losoweConst[bubbleChain[bciTemp + 1]] = losoweConst[bubbleChain[bciTemp]];
+     losoweConst[bubbleChain[bciTemp]] = l;
+
+     while ((key = getch()) != KEY_F(2));
+
+     wbkgdset(my_wins[bubbleChain[bciTemp]], COLOR_PAIR(0));
+     box(my_wins[bubbleChain[bciTemp]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp]]);
+
+     wbkgdset(my_wins[bubbleChain[bciTemp + 1]], COLOR_PAIR(0));
+     box(my_wins[bubbleChain[bciTemp + 1]], 0, 0);
+     wrefresh(my_wins[bubbleChain[bciTemp + 1]]);
+
+     bciTemp++;
+    }
+
+    x = leftX;
+    for (k = 0; k < N; ++k) {
+     wbkgdset(my_wins[k], COLOR_PAIR(0));
+     werase(my_wins[k]);
+     box(my_wins[k], 0, 0);
+     tempFloat = (double) ((double) losowe[k] / (double) 4.0);
+     mvwprintw(my_wins[k], 2, 2, "%.2f", tempFloat);
+     wrefresh(my_wins[k]);
+     x = x + cols;
+    }
+    while ((key = getch()) != KEY_F(2));
+   }
+  }
+  h /= 3;
+ }
+
+ strcat(collectionStat, "%d");
+ sprintf(collectionStat, collectionStat, collectionCount);
+ leftXStringCollection = maxX - strlen(collectionStat);
+ leftXStringCollection = round((float) leftXStringCollection / 2);
+ mvprintw(lines + 3, leftXStringCollection, collectionStat);
+
+ strcat(switchStat, "%d");
+ sprintf(switchStat, switchStat, switchCount);
+ leftXStringSwitch = maxX - strlen(switchStat);
+ leftXStringSwitch = round((float) leftXStringSwitch / 2);
+ mvprintw(lines + 4, leftXStringSwitch, switchStat);
+
+ while ((key = getch()) != KEY_F(2));
+
+ endwin();
+
+ fprintf(plik, "Statystki\r\n");
+ fprintf(plik, "Ilosc podzbiorow: %d\r\n", collectionStat);
+ fprintf(plik, "Ilosc zamian: %d\r\n", switchStat);
+
+ return 0;
 }
